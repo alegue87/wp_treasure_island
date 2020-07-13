@@ -22,7 +22,7 @@ class Dictionary_API {
       'callback' => [$this, 'meaning']
     ]);
 
-    register_rest_route($this->prefix, '/eng_to_ita', [
+    register_rest_route($this->prefix, '/traduction', [
       'method' => 'GET',
       'callback' => [$this, 'eng_to_ita']
     ]);
