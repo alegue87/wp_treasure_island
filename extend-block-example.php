@@ -21,10 +21,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 include_once 'api.php';
 include_once 'menus.php';
+include_once 'dictionary.php';
 
-add_action('rest_api_init', function(){ new Audio_API(); });
-(new Menus_API())->init();
+add_action('rest_api_init', function(){ 
+  new Audio_API(); 
+  new Dictionary_API();
+});
 
+(new Menus_API())->init(); // registrata all'interno
 
 add_action( 'enqueue_block_editor_assets', 'extend_block_example_enqueue_block_editor_assets' );
 
@@ -37,6 +41,14 @@ function extend_block_example_enqueue_block_editor_assets() {
         '1.0.0',
         true // Enqueue the script in the footer.
     );
+}
+
+add_filter( 'wp_insert_post_data' , 'filter_post_data' , '99', 2 );
+
+function filter_post_data( $data , $postarr ) {
+    // Change post title
+    $data['post_content'] = str_replace('&nbsp;', ' ', $data['post_content']);
+    return $data;
 }
 
 

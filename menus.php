@@ -120,7 +120,10 @@ class Menus_API {
       return new \WP_Error(404, 'Categoria non esistente');
     }
 
-    $posts = get_posts(array('category' => $categories[0]->term_id));
+    $posts = get_posts(array(
+      'category' => $categories[0]->term_id,
+      'numberposts' => -1, // all
+    ));
 
     $data = [];
     foreach($posts as &$post) {
