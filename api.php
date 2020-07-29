@@ -47,6 +47,7 @@ class Audio_API
         'source' => $post->guid,
         'name' => $this->get_audio_filename($post->guid)
       ));
+        // TODO: andrebbero sortati per 'name' ed eliminati i doppi
     }
     return new \WP_REST_Response(array($post_id => $references));
   }

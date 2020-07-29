@@ -26,9 +26,36 @@ include_once 'dictionary.php';
 add_action('rest_api_init', function(){ 
   new Audio_API(); 
   new Dictionary_API();
+
+  // add_categories_extra_to_post();
 });
 
 (new Menus_API())->init(); // registrata all'interno
+
+/*
+ * add categories name and id in post response 
+ */
+function add_categories_extra_to_post(){
+  register_rest_field('post', 'categories_extra', array(
+    'get_callback' => function($post){
+      $cats = get_the_category($post['id']);
+      $data = array();
+      if(!empty($cats)){
+        foreach($cats as $cat){
+          array_push($data, array(
+            'name' => $cat->name,
+            'id' => $cat->term_id,
+            'category_parent' => $cat->category_parent,
+            'description' => $cat->description,
+            'slug' => $cat->slug
+          ));
+        }
+      }
+      return $data;
+    }
+  ));
+}
+
 
 add_action( 'enqueue_block_editor_assets', 'extend_block_example_enqueue_block_editor_assets' );
 
@@ -46,8 +73,9 @@ function extend_block_example_enqueue_block_editor_assets() {
 add_filter( 'wp_insert_post_data' , 'filter_post_data' , '99', 2 );
 
 function filter_post_data( $data , $postarr ) {
-    // Change post title
+    // filter &nbsp;
     $data['post_content'] = str_replace('&nbsp;', ' ', $data['post_content']);
+    $data['post_content'] = str_replace('—', ' — ', $data['post_content']); // for better separation of sounds
     return $data;
 }
 

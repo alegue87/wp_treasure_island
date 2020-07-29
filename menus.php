@@ -125,13 +125,34 @@ class Menus_API {
       'numberposts' => -1, // all
     ));
 
-    $data = [];
     foreach($posts as &$post) {
+      // Aggiunge tags
       $tags = get_the_tags($post->ID);
       $post->{'tags'} = $tags;
 
+      // Toglie contenuto
       if(!isset($request['with_content'])) {
+        $match = array();
+        preg_match('/<p>(.*)<\/p>/', $post->post_content, $match);
         $post->post_content = '';
+        $post->{'chapter'} = $match[1];
+      }
+
+      // Aggiunge sub-category es: "Part 1"
+      $cats = get_the_category($post->ID);
+      if(!empty($cats)) {
+        foreach($cats as $cat){
+          if($cat->category_parent === $categories[0]->term_id) {
+            $post->{'sub_category'} = array(
+              'name' => $cat->name,
+              'id' => $cat->term_id,
+              'category_parent' => $cat->category_parent,
+              'description' => $cat->description,
+              'slug' => $cat->slug
+            );
+            break;
+          }
+        }
       }
     }
 
